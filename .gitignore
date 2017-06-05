@@ -1,0 +1,10 @@
+.DS_Store
+release/
+androidapp/**/*.*
+conf/*.*
+!conf/config_default.json
+!androidapp/**/empty
+data/*.*
+
+.idea/
+xsbupgradeFE/

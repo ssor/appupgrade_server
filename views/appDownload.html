@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>APP下载</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="/api/v1/upgrade1UPGRADE/js/jquery.min.js" type="text/javascript"></script>
+</head>
+
+<body style="margin: 0px">
+    <div id="content" style="margin: 0px;padding: 0px">
+    </div>
+    <script type="text/javascript">
+        $(function() {
+            var version = checkVersion();
+
+            if (version.ios) {
+                window.location.href = "" // app store link
+            }
+            if (version.android) {
+                $.ajax({
+                    url: '/upgrade?name=app&version=0.1&companyid=fakecompany',
+                    type: 'GET',
+                    success: function(data) {
+                        var url = data.url;
+                        if (url != null && url.length > 0)
+                            window.location.href = url;
+                    }
+                });
+            }
+        });
+
+        function checkVersion() {
+            var ua = window.navigator.userAgent.toLowerCase();
+
+            var version = {
+                "ios": ua.indexOf("iphone") > -1,
+                "android": ua.indexOf("android") > -1 || ua.indexOf("linux") > -1,
+                "safari": ua.indexOf("iphone") > -1,
+                "weixin": (ua.match(/MicroMessenger/i) == 'micromessenger')
+            };
+            return version;
+        }
+    </script>
+</body>
+
+</html>

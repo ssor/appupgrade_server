@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>APP下载</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+</head>
+
+<body style="margin: 0px;background-color: #000">
+    <div id="content" style="margin: 0px;padding: 0px">
+    </div>
+    <script type="text/javascript">
+        window.onload = function() {
+            var version = checkVersion();
+            if (version.weixin) {
+                var content = document.getElementById("content");
+                content.innerHTML = '<img src="/api/v1/upgrade1UPGRADE/img/weixin_downloadApp.png" style="width: 100%;height: 100%">'
+            } else {
+                window.location.href = "/downloadApp"
+            }
+        };
+
+        function checkVersion() {
+            var ua = window.navigator.userAgent.toLowerCase();
+
+            var version = {
+                "ios": ua.indexOf("iphone") > -1,
+                "android": ua.indexOf("android") > -1 || ua.indexOf("linux") > -1,
+                "safari": ua.indexOf("iphone") > -1,
+                "weixin": (ua.match(/MicroMessenger/i) == 'micromessenger')
+            };
+            return version;
+        }
+    </script>
+</body>
+
+</html>
