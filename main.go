@@ -20,7 +20,6 @@ func main() {
 		panic("配置文件加载错误: " + err.Error())
 	}
 
-	controllers.InitSys(conf)
 	router := gin.Default()
 
 	router.Static("/api/v1/upgrade1UPGRADE/css", "./static/css")
@@ -35,19 +34,24 @@ func main() {
 
 	//android api
 	router.GET("/upgrade_android", controllers.UpgradeAndroid)
-	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersion", controllers.AddCrossHeader)
-	router.POST("/api/v1/upgrade1UPGRADE/updateVersion", controllers.UpdateVersion)
+	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersion", addCrossHeader)
+	router.POST("/api/v1/upgrade/updateVersion", controllers.UpdateVersion)
 
 	//ios api
 	router.GET("/upgradeIOS", controllers.UpgradeIOS)
-	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersionIOS", controllers.AddCrossHeader)
-	router.POST("/api/v1/upgrade1UPGRADE/updateVersionIOS", controllers.UpdateVersionIOS)
+	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersionIOS", addCrossHeader)
+	router.POST("/api/v1/upgrade/updateVersionIOS", controllers.UpdateVersionIOS)
 
-	router.GET("/api/v1/upgrade1UPGRADE/allInfo", controllers.AllInfo)
+	// router.GET("/api/v1/upgrade1UPGRADE/allInfo", controllers.AllInfo)
 
 	//************* views *****************
 	router.GET("/weixinscan", controllers.Weixinscan)
 	router.GET("/downloadApp", controllers.DownloadApp)
 
-	router.Run(":" + conf.GetListeningPort())
+	router.Run(":" + conf.Get("listeningPort").(string))
+}
+
+func addCrossHeader(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "X-Requested-With,X_Requested_With,Content-Type")
 }

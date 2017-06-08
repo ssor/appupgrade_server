@@ -1,21 +1,17 @@
 package upgrade
 
-const (
-	fake_company = "fakecompany"
-)
-
-func NewUpgradeInfo(upgrade, tip, url, md5 string) UpgradeInfo {
-	return UpgradeInfo{
+func NewUpgradeInfo(tip, url, md5, version string) *UpgradeInfo {
+	return &UpgradeInfo{
 		Tip:     tip,
 		URL:     url,
 		MD5:     md5,
-		Upgrade: upgrade,
+		Version: version,
 	}
 }
 
 type UpgradeInfo struct {
-	Tip     string `json:"tip" bson:"tip"`
-	URL     string `json:"url" bson:"url"`
-	MD5     string `json:"md5" bson:"md5"`
-	Upgrade string `json:"version" bson:"version"` // yes or no
+	Tip     string `json:"tip"`
+	URL     string `json:"url""`
+	MD5     string `json:"md5"`
+	Version string `json:"version"`
 }
