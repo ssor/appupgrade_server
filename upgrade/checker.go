@@ -1,35 +1,33 @@
 package upgrade
 
 type Checker struct {
-	Name string
-	Rule *Rule
-	Info *UpgradeInfo
+	Name  string
+	Rules RuleList
+	Info  *UpgradeInfo
 }
 
-func NewChecker(name string, rule *Rule, info *UpgradeInfo) *Checker {
+func NewChecker(name string, rules RuleList, info *UpgradeInfo) *Checker {
 	return &Checker{
-		Name: name,
-		Rule: rule,
-		Info: info,
+		Name:  name,
+		Rules: rules,
+		Info:  info,
 	}
 }
 
-func (c *Checker) Test(paras map[string]string) bool {
-	return c.Rule.Test(paras)
-	// for _, rule := range c.Rules {
-	// 	if rule.Test(paras) == true {
-	// 		return true
-	// 	}
-	// }
-
-	// return false
+func (c *Checker) Test(paras ...*Para) bool {
+	for _, para := range paras {
+		if c.Rules.Test(para) == false {
+			return false
+		}
+	}
+	return true
 }
 
 type CheckerList []*Checker
 
-func (ckl CheckerList) Test(paras map[string]string) *Checker {
+func (ckl CheckerList) Test(paras ...*Para) *Checker {
 	for _, checker := range ckl {
-		if checker.Test(paras) == true {
+		if checker.Test(paras...) == true {
 			return checker
 		}
 	}

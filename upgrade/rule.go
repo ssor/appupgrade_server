@@ -1,34 +1,40 @@
 package upgrade
 
-type ParaList map[string]string
+// type ParaList []*Para
 
-func (pl ParaList) Fit(paras map[string]string) bool {
-	for k, v := range pl {
-		value, exists := paras[k]
-		if exists == false {
-			return false
-		}
+// func (pl ParaList) Fit(paras map[string]string) bool {
+// 	for k, v := range pl {
+// 		value, exists := paras[k]
+// 		if exists == false {
+// 			return false
+// 		}
 
-		if v != value {
-			return false
-		}
-	}
+// 		if v != value {
+// 			return false
+// 		}
+// 	}
 
-	return true
-}
+// 	return true
+// }
 
 type Rule struct {
-	Paras ParaList
+	// Paras      ParaList
+	Para *Para
+	Op   Operator
 }
 
-func NewRule(paras map[string]string) *Rule {
+func NewRule(para *Para, op Operator) *Rule {
 	return &Rule{
-		Paras: ParaList(paras),
+		Para: para,
+		Op:   op,
 	}
 }
 
-func (r *Rule) Test(paras map[string]string) bool {
-	return r.Paras.Fit(paras)
+func (r *Rule) Test(para *Para) bool {
+	if r.Para.Key != para.Key {
+		return false
+	}
+	return r.Op.compareValue(r.Para.Value, para.Value)
 }
 
 type RuleList []*Rule
@@ -39,4 +45,12 @@ func NewRuleList(rules ...*Rule) RuleList {
 
 func (rl RuleList) Add(rule *Rule) RuleList {
 	return append(rl, rule)
+}
+func (rl RuleList) Test(para *Para) bool {
+	for _, rule := range rl {
+		if rule.Test(para) == true {
+			return true
+		}
+	}
+	return false
 }

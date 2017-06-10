@@ -5,31 +5,28 @@ import (
 )
 
 func TestCheckers(t *testing.T) {
-	para1 := map[string]string{
-		"name":    "android1",
-		"version": "1.0",
-	}
-	para2 := map[string]string{
-		"name":    "android2",
-		"version": "1.0",
-	}
-	android1Rule := NewRule(para1)
-	android2Rule := NewRule(para2)
+	para1 := NewPara("name", "android1")
+	para2 := NewPara("version", "1.0")
+	para3 := NewPara("name", "android2")
+
+	android1Rules := RuleList{NewRule(para1, OpEqual), NewRule(para2, OpEqual)}
+
+	android2Rules := RuleList{NewRule(para3, OpEqual), NewRule(para2, OpEqual)}
 
 	android1UpgradeInfo := NewUpgradeInfo("1", "http1", "md555", "1.1")
 	android2UpgradeInfo := NewUpgradeInfo("2", "http1", "md555", "1.2")
 
-	android1Checker := NewChecker("1", android1Rule, android1UpgradeInfo)
-	android2Checker := NewChecker("2", android2Rule, android2UpgradeInfo)
+	android1Checker := NewChecker("1", android1Rules, android1UpgradeInfo)
+	android2Checker := NewChecker("2", android2Rules, android2UpgradeInfo)
 
 	androidCheckers := CheckerList{android1Checker, android2Checker}
 
-	resultCheck := androidCheckers.Test(para2)
+	resultCheck := androidCheckers.Test(para2, para3)
 	if resultCheck.Info.Version != "1.2" {
 		t.Fatal("should be 1.2")
 	}
 
-	resultCheck = androidCheckers.Test(para1)
+	resultCheck = androidCheckers.Test(para1, para2)
 	if resultCheck.Info.Version != "1.1" {
 		t.Fatal("should be 1.1")
 	}

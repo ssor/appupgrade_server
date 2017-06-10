@@ -8,17 +8,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Rule struct {
+	Key      string
+	Value    string
+	Operator string
+}
+
+type UpgradeRule struct {
+	Name  string  `json:"name"`
+	Rules []*Rule `json:"rules"`
+
+	Tip     string `json:"tip"`
+	URL     string `json:"url"`
+	MD5     string `json:"md5"`
+	Version string `json:"version"`
+}
+
 // AddChecker update升级
 func AddChecker(c *gin.Context) {
-	var upload struct {
-		Name         string            `json:"name"`
-		Requirements map[string]string `json:"requirements"`
-
-		Tip     string `json:"tip"`
-		URL     string `json:"url"`
-		MD5     string `json:"md5"`
-		Version string `json:"version"`
-	}
+	var upload UpgradeRule
 
 	err := c.BindJSON(&upload)
 	if err != nil {
@@ -26,9 +34,7 @@ func AddChecker(c *gin.Context) {
 		return
 	}
 
-	rule := upgrade.NewRule(upload.Requirements)
-	upgradeInfo := upgrade.NewUpgradeInfo(upload.Tip, upload.URL, upload.MD5, upload.Version)
-	newChecker := upgrade.NewChecker(upload.Name, rule, upgradeInfo)
+	newChecker := parseToChecker(&upload)
 	checkers = append(checkers, newChecker)
 	err = saveCheckers(checkers)
 	if err != nil {
@@ -37,6 +43,16 @@ func AddChecker(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "OK")
+}
+
+func parseToChecker(upgradeRule *UpgradeRule) *upgrade.Checker {
+	rules := upgrade.RuleList{}
+	for _, rule := range upgradeRule.Rules {
+		rules = append(rules, upgrade.NewRule(upgrade.NewPara(rule.Key, rule.Value), upgrade.Operator(rule.Operator)))
+	}
+	upgradeInfo := upgrade.NewUpgradeInfo(upgradeRule.Tip, upgradeRule.URL, upgradeRule.MD5, upgradeRule.Version)
+	newChecker := upgrade.NewChecker(upgradeRule.Name, rules, upgradeInfo)
+	return newChecker
 }
 
 // // UpdateIOS update IOS 的升级

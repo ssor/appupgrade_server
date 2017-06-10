@@ -9,13 +9,13 @@ import (
 
 // Upgrade 检测升级
 func Upgrade(c *gin.Context) {
-	paras := make(map[string]string)
+	paras := upgrade.ParaList{}
 	for _, param := range c.Params {
-		paras[param.Key] = param.Value
+		paras = append(paras, upgrade.NewPara(param.Key, param.Value))
 	}
 
 	var ui *upgrade.UpgradeInfo
-	checker := checkers.Test(paras)
+	checker := checkers.Test(paras...)
 	if checker != nil {
 		ui = checker.Info
 	}
