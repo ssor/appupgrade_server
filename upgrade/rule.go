@@ -19,8 +19,8 @@ package upgrade
 
 type Rule struct {
 	// Paras      ParaList
-	Para *Para
-	Op   Operator
+	Para *Para    `json:"para"`
+	Op   Operator `json:"op"`
 }
 
 func NewRule(para *Para, op Operator) *Rule {

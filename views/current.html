@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>版本信息</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet" />
+    <link href="/css/zchange.css" rel="stylesheet" />
+    <script src="/js/jquery.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/tools.js"></script>
+    <script src="/js/lodash.min.js"></script>
+    <script src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <style type=" text/css ">
+        body {
+            margin: 0;
+        }
+        
+        .line {
+            border-bottom: solid 3px rgba(100, 100, 100, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <h3 class="ztit "><img src="http://devchat.dyxsb.net/statics/img/bag.png " alt=" ">APP版本升级管理平台</h3>
+    <hr>
+    <div class="container ">
+        <form>
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级策略名称</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="android stable " id="input_name" placeholder=" ">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">版本号</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="1.1" id="input_version">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级文件地址</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="http://example.com/1.app" id="input_url">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级文件 MD5 校验</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="abc123" id="input_md5">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级提示</label>
+                <div class="col-10 ">
+                    <textarea class="form-control " id="input_tip" rows="3 ">222</textarea>
+                </div>
+            </div>
+            <div class="row " style="margin-bottom: 20px;">
+                <label for="example-text-input " class="col-12 col-form-label ">升级规则设定</label>
+                <div class="col-12 " style="padding-left: 20px; padding-right: 20px; background-color: rgba(100,100,100,0.2);">
+                    <table id="tb" class="stripe" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>参数名称</th>
+                                <th>比较方式</th>
+                                <th>值</th>
+                            </tr>
+                        </thead>
+
+                        <tbody style="text-align: center;">
+                            <tr>
+                                <td>device</td>
+                                <td>
+                                    <select size="1 " id="row-1-office " name="row-1-office ">
+                                    <option value="equal" selected="selected "> ==</option>
+                                    <option value="greaterThan"> ></option>
+                                    <option value="greaterAndEqualThan"> >=</option>
+                                    <option value="lessThan"> <</option>
+                                    <option value="lessAndEqualThan"> <=</option>
+                                </select>
+                                </td>
+                                <td>android</td>
+                            </tr>
+                            <tr>
+                                <td>main-version</td>
+                                <td>
+                                    <select size="1 " id="row-1-office " name="row-1-office ">
+                                    <option value="equal"> ==</option>
+                                    <option value="greaterThan"> ></option>
+                                    <option value="greaterAndEqualThan"> >=</option>
+                                    <option value="lessThan" selected="selected"> <</option>
+                                    <option value="lessAndEqualThan"> <=</option>
+                                </select>
+                                </td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-outline-success btn-sm" style="min-width: 10px;">添加</button>
+                        <button class="btn btn-outline-success btn-sm" style="min-width: 10px;">删除</button>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+        <div class="form-group row" id="uploadconf">
+            <button class="btn btn-primary" style="min-width: 120px;">提交</button>
+        </div>
+
+        <div class="row ">
+            <div class="line "></div>
+        </div>
+    </div>
+
+    <script>
+        var table
+        $(document).ready(function() {
+            table = $('#tb').DataTable({
+                paging: false,
+                ordering: false,
+                info: false,
+                searching: false
+            });
+            $('#uploadconf').click(function() {
+                uploadConfig()
+                return
+            });
+        });
+
+        function uploadConfig() {
+            var name = $("#input_name").val()
+            var version = $("#input_version").val()
+            var url = $("#input_url").val()
+            var md5 = $("#input_md5").val()
+            var tip = $("#input_tip").text()
+            var rules = parseRulesFromTable()
+
+            var config = {
+                name: name,
+                version: version,
+                url: url,
+                md5: md5,
+                tip: tip,
+                rules: rules
+            }
+            console.log(config)
+
+            $.post("/api/v1/upgrade/addChecker", JSON.stringify(config), function(data, status) {
+                console.info(data)
+            })
+        }
+
+        function parseRulesFromTable() {
+            var rules = []
+            var data = table.data()
+            console.log("there %d rows in table", data.length)
+            _.forEach(data, function(row) {
+                console.log("key: ", row[0])
+                var select = $(row[1])
+                var op = select.val()
+                console.log("Op : ", op)
+                console.log("Val: ", row[2])
+
+                rules.push({
+                    key: row[0],
+                    operator: op,
+                    value: row[2]
+                })
+            })
+            return rules
+        }
+    </script>
+</body>
+
+
+</html>

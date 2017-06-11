@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"customized_lp/upgrade_server/upgrade"
@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	tempFile = "data.dat.temp"
-	dataFile = "data.dat"
+	tempFile = "data/data.dat.temp"
+	dataFile = "data/data.dat"
 )
 
 var (

@@ -1,8 +1,8 @@
 package upgrade
 
 type Para struct {
-	Key   string
-	Value string
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 func NewPara(key, value string) *Para {

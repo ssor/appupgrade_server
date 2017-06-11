@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"net/http"
@@ -9,9 +9,9 @@ import (
 )
 
 type Rule struct {
-	Key      string
-	Value    string
-	Operator string
+	Key      string `json:"key"`
+	Value    string `json:"value"`
+	Operator string `json:"operator"`
 }
 
 type UpgradeRule struct {

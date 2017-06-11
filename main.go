@@ -22,31 +22,33 @@ func main() {
 
 	router := gin.Default()
 
-	router.Static("/api/v1/upgrade1UPGRADE/css", "./static/css")
-	router.Static("/api/v1/upgrade1UPGRADE/img", "./static/img")
-	router.Static("/api/v1/upgrade1UPGRADE/js", "./static/js")
-	router.Static("/api/v1/upgrade1UPGRADE/fonts", "./static/fonts")
-	router.Static("/api/v1/upgrade1UPGRADE/bootstrap", "./static/bootstrap")
+	router.Static("/css", "./static/css")
+	router.Static("/img", "./static/img")
+	router.Static("/js", "./static/js")
+	router.Static("/fonts", "./static/fonts")
+	router.Static("/bootstrap", "./static/bootstrap")
 
 	router.LoadHTMLGlob("views/*.html")
 
 	//************* api *****************
+	router.POST("/api/v1/upgrade/addChecker", controller.AddChecker)
 
-	//android api
-	router.GET("/upgrade_android", controllers.UpgradeAndroid)
-	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersion", addCrossHeader)
-	router.POST("/api/v1/upgrade/updateVersion", controllers.UpdateVersion)
+	// //android api
+	// router.GET("/upgrade_android", controller.UpgradeAndroid)
+	// router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersion", addCrossHeader)
+	// router.POST("/api/v1/upgrade/updateVersion", controller.UpdateVersion)
 
-	//ios api
-	router.GET("/upgradeIOS", controllers.UpgradeIOS)
-	router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersionIOS", addCrossHeader)
-	router.POST("/api/v1/upgrade/updateVersionIOS", controllers.UpdateVersionIOS)
+	// //ios api
+	// router.GET("/upgradeIOS", controller.UpgradeIOS)
+	// router.OPTIONS("/api/v1/upgrade1UPGRADE/updateVersionIOS", addCrossHeader)
+	// router.POST("/api/v1/upgrade/updateVersionIOS", controller.UpdateVersionIOS)
 
-	// router.GET("/api/v1/upgrade1UPGRADE/allInfo", controllers.AllInfo)
+	// router.GET("/api/v1/upgrade1UPGRADE/allInfo", controller.AllInfo)
 
 	//************* views *****************
-	router.GET("/weixinscan", controllers.Weixinscan)
-	router.GET("/downloadApp", controllers.DownloadApp)
+	router.GET("/admin", controller.Admin)
+	router.GET("/weixinscan", controller.Weixinscan)
+	router.GET("/downloadApp", controller.DownloadApp)
 
 	router.Run(":" + conf.Get("listeningPort").(string))
 }

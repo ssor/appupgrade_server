@@ -1,9 +1,9 @@
 package upgrade
 
 type Checker struct {
-	Name  string
-	Rules RuleList
-	Info  *UpgradeInfo
+	Name  string       `json:"name"`
+	Rules RuleList     `json:"rules"`
+	Info  *UpgradeInfo `json:"info"`
 }
 
 func NewChecker(name string, rules RuleList, info *UpgradeInfo) *Checker {
