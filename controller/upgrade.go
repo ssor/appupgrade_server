@@ -4,16 +4,24 @@ import (
 	"customized_lp/upgrade_server/upgrade"
 	"net/http"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
 )
 
 // Upgrade 检测升级
 func Upgrade(c *gin.Context) {
 	paras := upgrade.ParaList{}
-	for _, param := range c.Params {
-		paras = append(paras, upgrade.NewPara(param.Key, param.Value))
-	}
 
+	// values, _ := url.ParseQuery(c.Request.URL.RawQuery)
+	values := c.Request.URL.Query()
+	for key, values := range values {
+		value := ""
+		if len(values) > 0 {
+			value = values[0]
+		}
+		paras = append(paras, upgrade.NewPara(key, value))
+	}
+	spew.Dump(paras)
 	var ui *upgrade.UpgradeInfo
 	checker := checkers.Test(paras...)
 	if checker != nil {

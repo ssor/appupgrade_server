@@ -7,14 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="/css/theme.css" rel="stylesheet" />
     <link href="/css/zchange.css" rel="stylesheet" />
     <script src="/js/jquery.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
     <script src="/js/tools.js"></script>
     <script src="/js/lodash.min.js"></script>
-    <script src="http://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script src="/js/jquery.dataTables.min.js"></script>
     <style type=" text/css ">
         body {
             margin: 0;
@@ -24,105 +24,6 @@
             border-bottom: solid 3px rgba(100, 100, 100, 0.3);
         }
     </style>
-</head>
-
-<body>
-    <h3 class="ztit "><img src="http://devchat.dyxsb.net/statics/img/bag.png " alt=" ">APP版本升级管理平台</h3>
-    <hr>
-    <div class="container ">
-        <form>
-            <div class="form-group row ">
-                <label for="example-text-input " class="col-2 col-form-label ">升级策略名称</label>
-                <div class="col-10 ">
-                    <input class="form-control " type="text " value="android stable " id="input_name" placeholder=" ">
-                </div>
-            </div>
-
-            <div class="form-group row ">
-                <label for="example-text-input " class="col-2 col-form-label ">版本号</label>
-                <div class="col-10 ">
-                    <input class="form-control " type="text " value="1.1" id="input_version">
-                </div>
-            </div>
-
-            <div class="form-group row ">
-                <label for="example-text-input " class="col-2 col-form-label ">升级文件地址</label>
-                <div class="col-10 ">
-                    <input class="form-control " type="text " value="http://example.com/1.app" id="input_url">
-                </div>
-            </div>
-
-            <div class="form-group row ">
-                <label for="example-text-input " class="col-2 col-form-label ">升级文件 MD5 校验</label>
-                <div class="col-10 ">
-                    <input class="form-control " type="text " value="abc123" id="input_md5">
-                </div>
-            </div>
-
-            <div class="form-group row ">
-                <label for="example-text-input " class="col-2 col-form-label ">升级提示</label>
-                <div class="col-10 ">
-                    <textarea class="form-control " id="input_tip" rows="3 ">222</textarea>
-                </div>
-            </div>
-            <div class="row " style="margin-bottom: 20px;">
-                <label for="example-text-input " class="col-12 col-form-label ">升级规则设定</label>
-                <div class="col-12 " style="padding-left: 20px; padding-right: 20px; background-color: rgba(100,100,100,0.2);">
-                    <table id="tb" class="stripe" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th>参数名称</th>
-                                <th>比较方式</th>
-                                <th>值</th>
-                            </tr>
-                        </thead>
-
-                        <tbody style="text-align: center;">
-                            <tr>
-                                <td>device</td>
-                                <td>
-                                    <select size="1 " id="row-1-office " name="row-1-office ">
-                                    <option value="equal" selected="selected "> ==</option>
-                                    <option value="greaterThan"> ></option>
-                                    <option value="greaterAndEqualThan"> >=</option>
-                                    <option value="lessThan"> <</option>
-                                    <option value="lessAndEqualThan"> <=</option>
-                                </select>
-                                </td>
-                                <td>android</td>
-                            </tr>
-                            <tr>
-                                <td>main-version</td>
-                                <td>
-                                    <select size="1 " id="row-1-office " name="row-1-office ">
-                                    <option value="equal"> ==</option>
-                                    <option value="greaterThan"> ></option>
-                                    <option value="greaterAndEqualThan"> >=</option>
-                                    <option value="lessThan" selected="selected"> <</option>
-                                    <option value="lessAndEqualThan"> <=</option>
-                                </select>
-                                </td>
-                                <td>1</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div style="margin-top: 10px;">
-                        <button class="btn btn-outline-success btn-sm" style="min-width: 10px;">添加</button>
-                        <button class="btn btn-outline-success btn-sm" style="min-width: 10px;">删除</button>
-                    </div>
-                </div>
-
-            </div>
-        </form>
-
-        <div class="form-group row" id="uploadconf">
-            <button class="btn btn-primary" style="min-width: 120px;">提交</button>
-        </div>
-
-        <div class="row ">
-            <div class="line "></div>
-        </div>
-    </div>
 
     <script>
         var table
@@ -133,11 +34,88 @@
                 info: false,
                 searching: false
             });
+            $('#tb tbody').on('click', 'tr', function() {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                } else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+
             $('#uploadconf').click(function() {
                 uploadConfig()
                 return
             });
+            $("#removeconf").click(function() {
+                var confirm = confirm("确定移除该升级策略? ")
+                if (confirm) {
+                    removeConfig()
+                }
+            })
+
+            $('#btn_remove_rule').click(function() {
+                var rows = table.row('.selected')
+                rows.remove().draw(false);
+            });
+
+            $("#btn_input_rule").click(function() {
+                $('#myModal').modal('hide')
+
+                var key = $("#input_key").val()
+                var op = $("#select_op").val()
+                var value = $("#input_value").val()
+
+                console.log("key: %s %s value: %s", key, op, value)
+                addRow(key, op, value)
+            })
+
+            downloadConfig()
         });
+
+        function downloadConfig() {
+            $.get("/api/v1/upgrade/checkers", function(data, status) {
+                console.log("downloaded: ")
+                console.log(data)
+                if (_.size(data) > 0) {
+                    var checker = data[0]
+                    $("#input_name").val(checker.name)
+                    $("#input_version").val(checker.info.version)
+                    $("#input_url").val(checker.info.url)
+                    $("#input_md5").val(checker.info.md5)
+                    $("#input_tip").text(checker.info.tip)
+
+                    _.forEach(checker.rules, function(rule) {
+                        addRow(rule.para.key, rule.op, rule.para.value)
+                            // table.row.add([rule.para.key, select.html(), rule.para.value]).draw(false)
+                    })
+                }
+            })
+        }
+
+        function addRow(key, op, value) {
+            var compile = '<select size="1">' +
+                '<option value="equal"> ==</option>' +
+                '<option value="greaterThan"> ></option>' +
+                '<option value="greaterAndEqualThan"> >=</option>' +
+                '<option value="lessThan"> <</option>' +
+                '<option value="lessAndEqualThan"> <=</option>' +
+                '</select>'
+            var select = $(compile)
+            select.val(op)
+            select.find("option:selected").attr("selected", "selected")
+            table.row.add([key, select.prop("outerHTML"), value]).draw(false)
+        }
+
+        function removeConfig() {
+            var name = $("#input_name").val()
+            var config = {
+                name: name
+            }
+            $.post("/api/v1/upgrade/removeChecker", JSON.stringify(config), function(data, status) {
+                console.info(data)
+            })
+        }
 
         function uploadConfig() {
             var name = $("#input_name").val()
@@ -182,6 +160,127 @@
             return rules
         }
     </script>
+
+</head>
+
+<body>
+    <h3 class="ztit "><img src="" alt=" ">APP版本升级管理平台</h3>
+    <hr>
+    <div class="container ">
+        <div>
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级策略名称</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="" id="input_name" placeholder=" ">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">版本号</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="" id="input_version">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级文件地址</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="" id="input_url">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级文件 MD5 校验</label>
+                <div class="col-10 ">
+                    <input class="form-control " type="text " value="" id="input_md5">
+                </div>
+            </div>
+
+            <div class="form-group row ">
+                <label for="example-text-input " class="col-2 col-form-label ">升级提示</label>
+                <div class="col-10 ">
+                    <textarea class="form-control " id="input_tip" rows="3 "></textarea>
+                </div>
+            </div>
+            <div class="row " style="margin-bottom: 20px;">
+                <label for="example-text-input " class="col-12 col-form-label ">升级规则设定</label>
+                <div class="col-12 " style="padding-left: 20px; padding-right: 20px; background-color: rgba(100,100,100,0.2);">
+                    <table id="tb" class="stripe" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>参数名称</th>
+                                <th>比较方式</th>
+                                <th>值</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center;"> </tbody>
+                    </table>
+                    <div style="margin-top: 10px;">
+                        <button id="btn_add_rule" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#myModal" style="min-width: 10px;">添加</button>
+                        <button id="btn_remove_rule" class="btn btn-outline-success btn-sm" style="min-width: 10px;">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <button id="uploadconf" class="btn btn-primary" style="min-width: 120px;">提交</button>
+            <!--<button id="removeconf" class="btn btn-danger" style="min-width: 120px;">删除</button>-->
+        </div>
+
+        <div class="row ">
+            <div class="line "></div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">添加新规则</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container ">
+                        <form>
+                            <div class="form-group row ">
+                                <label for="example-text-input " class="col-2 col-form-label ">参数名称</label>
+                                <div class="col-10 ">
+                                    <input class="form-control " type="text " value="" id="input_key" placeholder=" ">
+                                </div>
+                            </div>
+
+                            <div class="form-group row ">
+                                <label for="example-text-input " class="col-2 col-form-label ">比较方式</label>
+                                <div class="col-10 ">
+                                    <select size="1 " id="select_op" name="" style="width:100%;">
+                                        <option value="equal" selected="selected"> ==</option>
+                                        <option value="greaterThan"> ></option>
+                                        <option value="greaterAndEqualThan"> >=</option>
+                                        <option value="lessThan"> <</option>
+                                        <option value="lessAndEqualThan"> <=</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row ">
+                                <label for="example-text-input " class="col-2 col-form-label ">值</label>
+                                <div class="col-10 ">
+                                    <input class="form-control " type="text " value="" id="input_value">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="btn_input_rule" type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 
 

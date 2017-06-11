@@ -32,6 +32,8 @@ func main() {
 
 	//************* api *****************
 	router.POST("/api/v1/upgrade/addChecker", controller.AddChecker)
+	router.GET("/api/v1/upgrade/checkers", controller.Checkers)
+	router.GET("/api/v1/upgrade/upgrade", controller.Upgrade)
 
 	// //android api
 	// router.GET("/upgrade_android", controller.UpgradeAndroid)

@@ -4,10 +4,10 @@ type Operator string
 
 const (
 	OpEqual            = "equal"
-	OpGreaterThan      = ">"
-	OpGreaterEqualThan = ">="
-	OpLessThan         = "<"
-	OpLessEqualThan    = "<="
+	OpGreaterThan      = "greaterThan"
+	OpGreaterEqualThan = "greaterAndEqualThan"
+	OpLessThan         = "lessThan"
+	OpLessEqualThan    = "lessAndEqualThan"
 )
 
 func (op Operator) compareValue(dest, src string) bool {

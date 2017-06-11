@@ -35,7 +35,7 @@ func AddChecker(c *gin.Context) {
 	}
 
 	newChecker := parseToChecker(&upload)
-	checkers = append(checkers, newChecker)
+	checkers = checkers.Update(newChecker)
 	err = saveCheckers(checkers)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "system error")
@@ -53,6 +53,11 @@ func parseToChecker(upgradeRule *UpgradeRule) *upgrade.Checker {
 	upgradeInfo := upgrade.NewUpgradeInfo(upgradeRule.Tip, upgradeRule.URL, upgradeRule.MD5, upgradeRule.Version)
 	newChecker := upgrade.NewChecker(upgradeRule.Name, rules, upgradeInfo)
 	return newChecker
+}
+
+// Checkers return all checkers
+func Checkers(c *gin.Context) {
+	c.JSON(http.StatusOK, checkers)
 }
 
 // // UpdateIOS update IOS 的升级

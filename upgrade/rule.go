@@ -1,5 +1,11 @@
 package upgrade
 
+import (
+	"fmt"
+
+	"github.com/davecgh/go-spew/spew"
+)
+
 // type ParaList []*Para
 
 // func (pl ParaList) Fit(paras map[string]string) bool {
@@ -30,11 +36,16 @@ func NewRule(para *Para, op Operator) *Rule {
 	}
 }
 
-func (r *Rule) Test(para *Para) bool {
-	if r.Para.Key != para.Key {
-		return false
+func (r *Rule) Test(paras []*Para) bool {
+	for _, para := range paras {
+		if para.Key == r.Para.Key {
+			return r.Op.compareValue(para.Value, r.Para.Value)
+		}
 	}
-	return r.Op.compareValue(r.Para.Value, para.Value)
+	return false
+	// if r.Para.Key != para.Key {
+	// 	return false
+	// }
 }
 
 type RuleList []*Rule
@@ -46,11 +57,14 @@ func NewRuleList(rules ...*Rule) RuleList {
 func (rl RuleList) Add(rule *Rule) RuleList {
 	return append(rl, rule)
 }
-func (rl RuleList) Test(para *Para) bool {
+func (rl RuleList) Test(paras []*Para) bool {
 	for _, rule := range rl {
-		if rule.Test(para) == true {
-			return true
+		if rule.Test(paras) == false {
+			fmt.Println("rule test failed: ")
+			spew.Dump(rule)
+			// fmt.Println("paras: ", paras)
+			return false
 		}
 	}
-	return false
+	return true
 }

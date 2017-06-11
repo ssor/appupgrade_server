@@ -9,13 +9,11 @@ import (
 )
 
 const (
-	tempFile = "data/data.dat.temp"
-	dataFile = "data/data.dat"
+	tempFile = "data/data.json.temp"
+	dataFile = "data/data.json"
 )
 
 var (
-	// andoidCheckers upgrade.CheckerList
-	// iosCheckers    upgrade.CheckerList
 	checkers upgrade.CheckerList
 )
 
